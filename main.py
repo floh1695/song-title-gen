@@ -3,12 +3,21 @@
 import pathlib
 import random
 import requests
+import sqlite3
 import sys
 
 nouns_source = 'http://www.desiquintans.com/downloads/nounlist/nounlist.txt'
 nouns_file = pathlib.Path('./.words.nouns.csv')
+words_database = pathlib.Path('./.words.db')
 
 noun_separator = ','
+
+def create_connection(database_file):
+    try:
+        connection = sqlite3.connect(database_file)
+        return connection
+    except sqlite3.Error as e:
+        print(e)
 
 def nouns_exist():
   return nouns_file.exists()
@@ -30,6 +39,8 @@ def get_nouns():
   return nouns
 
 def main(verbose=False):
+  connection = create_connection(words_database)
+
   if not nouns_exist():
     fetch_nouns()
 
